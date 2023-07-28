@@ -2,35 +2,27 @@ from confluent_kafka.avro import AvroConsumer
 from google.cloud import bigquery
 import os 
 
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="/home/usr/.google/credentials/google_credentials.json"
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="D:\DS\DF\airflow_vanila\key\keyfile.json"
 
-dataset_name = 'application_record'
-table_name = 'application_record_training'
+dataset_name = 'online_payment'
+table_name = 'airflow_orchestration'
 
 client = bigquery.Client()
 client.create_dataset(dataset_name, exists_ok=True)
 dataset = client.dataset(dataset_name)
 
 schema = [
-    bigquery.SchemaField('ID', 'INT64'),
-    bigquery.SchemaField('CODE_GENDER', 'STRING'),
-    bigquery.SchemaField('FLAG_OWN_CAR', 'STRING'),
-    bigquery.SchemaField('FLAG_OWN_REALTY', 'STRING'),
-    bigquery.SchemaField('CNT_CHILDREN', 'INT64'),
-    bigquery.SchemaField('AMT_INCOME_TOTAL', 'FLOAT64'),
-    bigquery.SchemaField('NAME_INCOME_TYPE', 'STRING'),
-    bigquery.SchemaField('NAME_EDUCATION_TYPE', 'STRING'),
-    bigquery.SchemaField('NAME_FAMILY_STATUS', 'STRING'),
-    bigquery.SchemaField('NAME_HOUSING_TYPE', 'STRING'),
-    bigquery.SchemaField('DAYS_BIRTH', 'INT64'),
-    bigquery.SchemaField('DAYS_EMPLOYED', 'INT64'),
-    bigquery.SchemaField('FLAG_MOBIL', 'INT64'),
-    bigquery.SchemaField('FLAG_WORK_PHONE', 'INT64'),
-    bigquery.SchemaField('FLAG_PHONE', 'INT64'),
-    bigquery.SchemaField('FLAG_EMAIL', 'INT64'),
-    bigquery.SchemaField('OCCUPATION_TYPE', 'STRING'),
-    bigquery.SchemaField('CNT_FAM_MEMBERS', 'FLOAT64')
-    
+    bigquery.SchemaField('step', 'INT64'),
+    bigquery.SchemaField('type', 'STRING'),
+    bigquery.SchemaField('amount', 'FLOAT64'),
+    bigquery.SchemaField('nameOrig', 'STRING'),
+    bigquery.SchemaField('oldbalanceOrg', 'FLOAT64'),
+    bigquery.SchemaField('newbalanceOrig', 'FLOAT64'),
+    bigquery.SchemaField('nameDest', 'STRING'),
+    bigquery.SchemaField('oldbalanceDest', 'FLOAT64'),
+    bigquery.SchemaField('newbalanceDest', 'FLOAT64'),
+    bigquery.SchemaField('isFraud', 'INT64'),
+    bigquery.SchemaField('isFlaggedFraud', 'INT64'),
 ]
 
 table_ref = bigquery.TableReference(dataset, table_name)

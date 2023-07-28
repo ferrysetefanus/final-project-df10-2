@@ -4,8 +4,8 @@ import csv
 from time import sleep
 
 def load_avro_schema_from_file():
-    key_schema = avro.load("application_record_key.avsc")
-    value_schema = avro.load("application_record_value.avsc")
+    key_schema = avro.load("online_payment_key.avsc")
+    value_schema = avro.load("online_payment_value.avsc")
 
     return key_schema, value_schema
 
@@ -20,34 +20,30 @@ def send_record():
 
     producer = AvroProducer(producer_config, default_key_schema=key_schema, default_value_schema=value_schema)
 
-    file = open('/home/Archie/final-project/datasets/application_record_edit.csv')
+    file = open('D:\DS\DF\airflow_vanila\datasets\online_payment.csv')
     csvreader = csv.reader(file)
     header = next(csvreader)
+    step_value = int(row[0])
     for row in csvreader:
-            key = {"ID":  int(row[0])}
+            is_even = step_value % 2 == 0
+            key = {"step":  step_value}
             value = {
-                "ID": int(row[0]),
-                "CODE_GENDER": str(row[1]),
-                "FLAG_OWN_CAR": str(row[2]),
-                "FLAG_OWN_REALTY": str(row[3]),
-                "CNT_CHILDREN": int(row[4]),
-                "AMT_INCOME_TOTAL": float(row[5]),
-                "NAME_INCOME_TYPE": str(row[6]),
-                "NAME_EDUCATION_TYPE": str(row[7]),
-                "NAME_FAMILY_STATUS": str(row[8]),
-                "NAME_HOUSING_TYPE": str(row[9]),
-                "DAYS_BIRTH": int(row[10]),
-                "DAYS_EMPLOYED": int(row[11]),
-                "FLAG_MOBIL": int(row[12]),
-                "FLAG_WORK_PHONE": int(row[13]),
-                "FLAG_PHONE": int(row[14]),
-                "FLAG_EMAIL": int(row[15]),
-                "OCCUPATION_TYPE": str(row[16]),
-                "CNT_FAM_MEMBERS": float(row[17])
+                "step": step_value,
+                "type": str(row[1]),
+                "amount": float(row[2]),
+                "nameOrig": str(row[3]),
+                "oldbalanceOrg": float(row[4]),
+                "newbalanceOrig": float(row[5]),
+                "nameDest": str(row[6]),
+                "oldbalanceDest": float(row[7]),
+                "newbalanceDest": float(row[8]),
+                "isFraud": int(row[9]),
+                "isFlaggedFraud": int(row[10])
             }
 
             try:
-                producer.produce(topic='practice.application_record_Training', key=key, value=value)
+                if is_even:
+                    producer.produce(topic='com.online.payment', key=key, value=value)
             except Exception as e:
                 print(f"Exception while producing record value - {value}: {e}")
             else:
