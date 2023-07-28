@@ -14,6 +14,7 @@ import pyspark
 from pyspark.sql import SparkSession
 from pyspark.sql import functions as F
 from pyspark.sql.types import IntegerType, TimestampType
+from pyspark.sql.functions import col, when, substring
 
 
 import pandas as pd
@@ -45,6 +46,22 @@ df = df.withColumn("timestamp", start_time + (F.col("step")) * F.expr("INTERVAL 
 
 # create column date from timestamp
 df = df.withColumn("date", F.date_format("timestamp", "yyyy-MM-dd"))
+
+# Fungsi untuk menentukan tipe (customer atau merchant)
+def determine_type(char):
+    return when(char == "C", "Customer").when(char == "M", "Merchant")
+
+# Ekstrak karakter pertama dan buat kolom baru
+df = df.withColumn("origin", determine_type(substring(col("nameOrig"), 1, 1))) \
+              .withColumn("destination", determine_type(substring(col("nameDest"), 1, 1)))
+
+# Fungsi untuk mapping nilai 0 dan 1 menjadi "No" dan "Yes"
+def map_to_yes_no(value):
+    return when(value == 0, "No").when(value == 1, "Yes")
+
+# Lakukan mapping dan buat kolom baru
+df = df.withColumn("isFraud", map_to_yes_no(col("isFraud"))) \
+              .withColumn("isFlaggedFraud", map_to_yes_no(col("isFlaggedFraud")))
 
 # Menggabungkan semua partisi menjadi satu partisi tunggal
 df = df.coalesce(1)

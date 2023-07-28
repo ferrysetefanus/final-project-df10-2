@@ -122,10 +122,12 @@ with DAG(
             {"name": "nameDest", "type": "STRING", "mode": "NULLABLE"},
             {"name": "oldbalanceDest", "type": "FLOAT64", "mode": "NULLABLE"},
             {"name": "newbalanceDest", "type": "FLOAT64", "mode": "NULLABLE"},
-            {"name": "isFraud", "type": "INT64", "mode": "NULLABLE"},
-            {"name": "isFlaggedFraud", "type": "INT64", "mode": "NULLABLE"},
+            {"name": "isFraud", "type": "STRING", "mode": "NULLABLE"},
+            {"name": "isFlaggedFraud", "type": "STRING", "mode": "NULLABLE"},
             {"name": "timestamp", "type": "TIMESTAMP", "mode": "NULLABLE"},
-            {"name": "date", "type": "DATE", "mode": "NULLABLE"}
+            {"name": "date", "type": "DATE", "mode": "NULLABLE"},
+            {"name": "origin", "type": "STRING", "mode": "NULLABLE"},
+            {"name": "destination", "type": "STRING", "mode": "NULLABLE"}
         ],
         autodetect=False,
         write_disposition="WRITE_TRUNCATE",
