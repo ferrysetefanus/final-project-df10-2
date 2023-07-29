@@ -25,7 +25,6 @@ import pyarrow.parquet as pq
 DATASET_ID = Variable.get("DATASET_ID")
 BASE_PATH = Variable.get("BASE_PATH")
 BUCKET_NAME = Variable.get("BUCKET_NAME")
-PARTITION = Variable.get("PARTITION")
 CLUSTERS = Variable.get("CLUSTERS")
 GOOGLE_CLOUD_CONN_ID = Variable.get("GOOGLE_CLOUD_CONN_ID")
 BIGQUERY_TABLE_NAME = "online_payment"
@@ -85,6 +84,11 @@ with DAG(
         task_id="unzip_file_task", 
         python_callable=unzip_file
     )
+
+    # spark_transform_task = BashOperator(
+    #     task_id="spark_transform_task",
+    #     bash_command="cd /opt/airflow/spark && python spark_transform.py"
+    # )
 
     spark_transform_task = BashOperator(
         task_id="spark_transform_task",
